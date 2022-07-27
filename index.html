@@ -44,88 +44,85 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
   <script type="text/babel">
-
-    console.log("야옹");
-
+    // console.log("야옹");
     const 여기다가그려 = document.querySelector('#app');
-    
-    //const foo = "hello";
-    function foo (){
-      return 1;
+
+    // const catItem = (
+    //   <li>
+    //     <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+    //   </li>
+    // );
+
+    function CatItem(props) {
+      // console.log(props);
+      return (
+        <li>
+          {props.title}
+          <img src={props.img} />
+        </li>
+      );
     }
 
-    const catItem = (
-      <li>
-        <img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
-      </li>
-    );
-    const favorites = (
-      <ul class="favorites">
-        {1+3}
-        {foo == "hello" ? "true" : "false"}
-        {foo()}
-        {catItem}
-        {catItem}
-        {catItem}
-      </ul>
-    );
-    const maincard = (
-      <div class="main-card">
-      <img
-        src="https://cataas.com/cat/60b73094e04e18001194a309/says/react"
-        alt="고양이"
-        width="400"
-      />
-      <button>🤍</button>
-    </div>
-    );
-    const h1 = (
-      <h1>1번째 고양이 가라사대</h1>
-    );
-    const form = (
-      <form>
-      <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-      <button type="submit">생성</button>
-    </form>
-    );
+
+    // const favorites = (
+    //   <ul class="favorites">
+    //     <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" title="img1"/>
+    //     <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" title="img2"/>
+    //   </ul>
+    // );
+
+    function Favorites() {
+      return (
+        <ul class="favorites">
+          <CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" title="img1" />
+          <CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" title="img2" />
+        </ul>
+      );
+    }
+
+    // const h1 = (
+    //   <h1>1번째 고양이 가라사대</h1>
+    // );
+
+    const H1 = (props)=>{
+      // console.log(props);
+      return (
+        <h1>{props.children}</h1>
+      );
+    }
+      const Form = () => {
+        return (
+          <form>
+            <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+            <button type="submit">생성</button>
+          </form>
+        );
+      }
+
+    const MainCard = ({img}) => 
+      (
+        <div class="main-card">
+          <img
+            src={img}
+            alt="냥"
+            width="400"
+          />
+          <button>🤍</button>
+        </div>
+      );
 
     const app = (
       <div>
-        {h1}
-        {form}
-        {maincard}
-        {favorites}
+        <H1> 1번째 고양이 가라사대 </H1>
+        <H1> 2번째 고양이 가라사대 </H1>
+        <Form />
+        <MainCard img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" title="냥1"/>
+        <Favorites />
       </div>
     );
 
     ReactDOM.render(app, 여기다가그려);
-
-
-      // //1.javascript
-      // const likeButton = document.querySelector(".main-card button")
-      // likeButton.addEventListener("click", function(){
-      //   likeButton.innerHTML = "a";
-
-      //   const favorites = document.querySelector(".favorites");
-      //   const newFavoriteimg = document.createElement("img");
-      //   newFavoriteimg.src = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
-
-<<<<<<< HEAD
-      //   const li = document.createElement("li");
-      //   li.appendChild(newFavoriteimg);
-      //   favorites.append(li);
-      // });
   </script>
 </body>
 
 </html>
-=======
-        const li = document.createElement("li");
-        li.appendChild(newFavoriteimg);
-        favorites.append(li);
-      });
-    </script>
-  </body>
-</html>
->>>>>>> parent of ad3130f (
-템플릿 테스트)
