@@ -55,24 +55,32 @@
         return <h1>{props.children}</h1>;
       };
 
-      const Form = ({ handleFormSubmit1 }) => {
+      const Form = () => {
         const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
         const [value, setValue] = React.useState("");
         const [errorMessage, setErrorMessage] = React.useState("");
 
         function handleInputChange(e) {
           const userValue = e.target.value;
+          setErrorMessage("");
           if (includesHangul(userValue)) {
             setErrorMessage("한글은 입력할 수 없습니다. ");
-          } else {
-            setErrorMessage("");
           }
+          //console.log(userValue);
 
           setValue(userValue.toUpperCase());
         }
 
+        function handleFormSubmit(e) {
+          e.preventDefault();
+          setErrorMessage("");
+          if (value === "") {
+            setErrorMessage("빈값은 입력할 수 없습니다");
+          }
+        }
+
         return (
-          <form>
+          <form onSubmit={handleFormSubmit}>
             <input
               type="text"
               name="name"
@@ -80,9 +88,7 @@
               value={value}
               onChange={handleInputChange}
             />
-            <button type="submit" onClick={handleFormSubmit1}>
-              생성
-            </button>
+            <button type="submit"> 생성 </button>
             <p style={{ color: "red" }}>{errorMessage}</p>
           </form>
         );
@@ -128,9 +134,6 @@
         const CAT3 =
           "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-        //const counterState = React.useState(1);
-        //const counter = counterState[0];
-        //const setCounter = counterState[1];
         const [counter, setCounter] = React.useState(1);
         const [catimg, setCatImg] = React.useState(CAT1);
         const [favorites, setFavorites] = React.useState([CAT1, CAT2, CAT3]);
@@ -159,14 +162,14 @@
 
         function handleHeartClick() {
           console.log("하트 누름");
-          setFavorites([...favorites, CAT3]); //배열에 추가  ES6+스프레드 오퍼레이터 문법
+          setFavorites([...favorites, CAT3]); //배열에 추가  ES6+스프레드(전개) 오퍼레이터(연산자) 문법
         }
 
         return (
           <div>
             <H1> {counter}번째 고양이 가라사대 </H1>
             <H1> 2번째 고양이 가라사대 </H1>
-            <Form handleFormSubmit1={handleFormSubmit} />
+            <Form handleFormSubmit={handleFormSubmit} />
             <MainCard
               img={catimg}
               title="냥1"
