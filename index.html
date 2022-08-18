@@ -24,21 +24,10 @@
       flex-wrap: wrap;
       gap: 15px;
     }
-
-    /* .favorites img {
-    width: 150px;
-  } */
   </style>
 
   <body>
     <div id="app" />
-    <!-- <h1>1번째 고양이 가라사대</h1>
-    <form>
-      <input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-      <button type="submit">생성</button>
-    </form>
-    
-     -->
     <script
       src="https://unpkg.com/react@17/umd/react.development.js"
       crossorigin
@@ -49,13 +38,22 @@
     ></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script type="text/babel">
+      const jsonLocalStorage = {
+        setItem: (key, value) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        },
+        getItem: (key) => {
+          return JSON.parse(localStorage.getItem(key));
+        },
+      };
+
       const 여기다가그려 = document.querySelector("#app");
 
       const H1 = (props) => {
         return <h1>{props.children}</h1>;
       };
 
-      const Form = () => {
+      const Form = ({ updateMainCat }) => {
         const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
         const [value, setValue] = React.useState("");
         const [errorMessage, setErrorMessage] = React.useState("");
@@ -74,9 +72,13 @@
         function handleFormSubmit(e) {
           e.preventDefault();
           setErrorMessage("");
+
           if (value === "") {
             setErrorMessage("빈 값은 입력할 수 없습니다");
+            return;
           }
+
+          updateMainCat();
         }
 
         return (
@@ -94,11 +96,11 @@
         );
       };
 
-      const MainCard = ({ img, handleHeartClick }) => {
+      const MainCard = ({ img, onHeartClick }) => {
         return (
           <div className="main-card">
             <img src={img} alt="냥" width="400" />
-            <button onClick={handleHeartClick}>🤍</button>
+            <button onClick={onHeartClick}>🤍</button>
           </div>
         );
       };
@@ -114,7 +116,6 @@
       }
 
       function CatItem(props) {
-        // console.log(props);
         return (
           <li>
             {props.title}
@@ -134,18 +135,21 @@
         const CAT3 =
           "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-        const [counter, setCounter] = React.useState(1);
+        const [counter, setCounter] = React.useState(
+          jsonLocalStorage.getItem("count")
+        );
         const [catimg, setCatImg] = React.useState(CAT1);
-        const [favorites, setFavorites] = React.useState([CAT1, CAT2, CAT3]);
-        console.log("카운터", counter);
+        const [favorites, setFavorites] = React.useState(
+          jsonLocalStorage.getItem("favorites") || []
+        );
 
         ///상태 끌어올리기 (lifting state up) : 상태를 다른 컴포넌트에서 선언하도록 변경, 자식 컴포넌트에게 프롭스props 로 넘겨주기
         ///Form의 함수를 App의 함수로 이동
-        function handleFormSubmit(evnet) {
-          event.preventDefault(); //새로고침 막아줌
-          console.log("폼 전송됨");
-          setCounter(counter + 1);
-          setCatImg(rtnCatImg);
+        function updateMainCat(evnet) {
+          const nxtCount = counter + 1;
+          setCounter(nxtCount);
+          setCatImg(rtnCatImg());
+          jsonLocalStorage.setItem("count", nxtCount);
         }
 
         function rtnCatImg() {
@@ -161,19 +165,19 @@
         }
 
         function handleHeartClick() {
-          console.log("하트 누름");
-          setFavorites([...favorites, CAT3]); //배열에 추가  ES6+스프레드(전개) 오퍼레이터(연산자) 문법
+          const nxtFavorites = [...favorites, catimg];
+          setFavorites(nxtFavorites); //배열에 추가  ES6+스프레드(전개) 오퍼레이터(연산자) 문법
+          jsonLocalStorage.setItem("favorites", nxtFavorites);
         }
 
         return (
           <div>
             <H1> {counter}번째 고양이 가라사대 </H1>
-            <H1> 2번째 고양이 가라사대 </H1>
-            <Form handleFormSubmit={handleFormSubmit} />
+            <Form updateMainCat={updateMainCat} />
             <MainCard
               img={catimg}
               title="냥1"
-              handleHeartClick={handleHeartClick}
+              onHeartClick={handleHeartClick}
             />
             <Favorites favorites={favorites} />
           </div>
