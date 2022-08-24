@@ -55,16 +55,24 @@ function Form({ updateMainCat }) {
   );
 }
 
-function MainCard({ img, onHeartClick }) {
+function MainCard({ img, onHeartClick, alreadyFavorite }) {
+  console.log(alreadyFavorite);
+  const heartIcon = alreadyFavorite ? "💖" : "🤍";
+
   return (
     <div className="main-card">
       <img src={img} alt="냥" width="400" />
-      <button onClick={onHeartClick}>🤍</button>
+      <button onClick={onHeartClick}>{heartIcon}</button>
     </div>
   );
 }
 
 function Favorites({ favorites }) {
+  if (favorites.length === 0) {
+    //조건부 렌더링
+    return <div>사진 위 하트를 눌러 고양이 사진을 저장해봐요!</div>;
+  }
+
   return (
     <ul className="favorites">
       {favorites.map((cat) => (
@@ -108,17 +116,22 @@ const App = () => {
   }
 
   const [catimg, setCatImg] = React.useState(CAT1);
-  const [counter, setCounter] = React.useState(
-    jsonLocalStorage.getItem("count")
-  );
-  const [favorites, setFavorites] = React.useState(
-    jsonLocalStorage.getItem("favorites") || []
-  );
+  const [counter, setCounter] = React.useState(() => {
+    return jsonLocalStorage.getItem("count");
+  });
+  const [favorites, setFavorites] = React.useState(() => {
+    return jsonLocalStorage.getItem("favorites") || [];
+  });
+
+  const alreadyFavorite = favorites.includes(catimg);
 
   React.useEffect(() => {
     initialCat();
-  }, []);
+  }, []); //맨 처음에만
 
+  React.useEffect(() => {
+    console.log(counter);
+  }, [counter]); //카운터 바뀔때마다(렌더링 될때마다) 불림.
   //initialCat(); //계속 불러짐
 
   ///상태 끌어올리기 (lifting state up) : 상태를 다른 컴포넌트에서 선언하도록 변경, 자식 컴포넌트에게 프롭스props 로 넘겨주기
@@ -126,11 +139,13 @@ const App = () => {
   async function updateMainCat(value) {
     console.log(value);
 
-    const nxtCount = counter + 1;
     const newCat = await fetchCat(value);
-    setCounter(nxtCount);
+    setCounter((prev) => {
+      const nxtCount = prev + 1;
+      jsonLocalStorage.setItem("count", nxtCount);
+      return nxtCount;
+    });
     setCatImg(newCat);
-    jsonLocalStorage.setItem("count", nxtCount);
   }
 
   function rtnCatImg(value) {
@@ -152,11 +167,18 @@ const App = () => {
     jsonLocalStorage.setItem("favorites", nxtFavorites);
   }
 
+  const counterTitle = counter == null ? counter : counter + "번째";
+
   return (
     <div>
-      <H1> {counter}번째 고양이 가라사대 </H1>
+      <H1>{counterTitle} 고양이 가라사대 </H1>
       <Form updateMainCat={updateMainCat} />
-      <MainCard img={catimg} title="냥1" onHeartClick={handleHeartClick} />
+      <MainCard
+        img={catimg}
+        title="냥1"
+        onHeartClick={handleHeartClick}
+        alreadyFavorite={alreadyFavorite}
+      />
       <Favorites favorites={favorites} />
     </div>
   );
