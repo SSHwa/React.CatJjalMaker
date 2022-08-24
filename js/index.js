@@ -92,6 +92,21 @@ const App = () => {
   // const CAT3 =
   //   "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
+  const fetchCat = async (text) => {
+    const OPEN_API_DOMAIN = "https://cataas.com";
+    const response = await fetch(
+      `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
+    );
+    const responseJson = await response.json();
+    return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+  };
+
+  async function initialCat() {
+    const newCat = await fetchCat("First cat");
+    console.log(newCat);
+    setCatImg(newCat);
+  }
+
   const [catimg, setCatImg] = React.useState(CAT1);
   const [counter, setCounter] = React.useState(
     jsonLocalStorage.getItem("count")
@@ -99,6 +114,12 @@ const App = () => {
   const [favorites, setFavorites] = React.useState(
     jsonLocalStorage.getItem("favorites") || []
   );
+
+  React.useEffect(() => {
+    initialCat();
+  }, []);
+
+  //initialCat(); //계속 불러짐
 
   ///상태 끌어올리기 (lifting state up) : 상태를 다른 컴포넌트에서 선언하도록 변경, 자식 컴포넌트에게 프롭스props 로 넘겨주기
   ///Form의 함수를 App의 함수로 이동
@@ -111,15 +132,6 @@ const App = () => {
     setCatImg(newCat);
     jsonLocalStorage.setItem("count", nxtCount);
   }
-
-  const fetchCat = async (text) => {
-    const OPEN_API_DOMAIN = "https://cataas.com";
-    const response = await fetch(
-      `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
-    );
-    const responseJson = await response.json();
-    return `${OPEN_API_DOMAIN}/${responseJson.url}`;
-  };
 
   function rtnCatImg(value) {
     //console.log(counter % 3 + 1);
