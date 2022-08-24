@@ -1,3 +1,33 @@
+import React from "react";
+import Title from "./components/Title";
+import Form from "./components/Form";
+import MainCard from "./components/MainCard";
+import Favorites from "./components/Favorites";
+import "./App.css";
+
+/*
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
+  );
+}
+*/
+
 const jsonLocalStorage = {
   setItem: (key, value) => {
     localStorage.setItem(key, JSON.stringify(value));
@@ -6,92 +36,6 @@ const jsonLocalStorage = {
     return JSON.parse(localStorage.getItem(key));
   },
 };
-
-const H1 = (props) => {
-  return <h1>{props.children}</h1>;
-};
-
-function Form({ updateMainCat }) {
-  const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
-  const [value, setValue] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState("");
-
-  function handleInputChange(e) {
-    const userValue = e.target.value;
-    setErrorMessage("");
-    if (includesHangul(userValue)) {
-      setErrorMessage("한글은 입력할 수 없습니다. ");
-    }
-    //console.log(userValue);
-
-    setValue(userValue.toUpperCase());
-  }
-
-  function handleFormSubmit(e) {
-    e.preventDefault();
-    setErrorMessage("");
-
-    if (value === "") {
-      setErrorMessage("빈 값은 입력할 수 없습니다");
-      return;
-    }
-
-    updateMainCat(value);
-  }
-
-  return (
-    <form onSubmit={handleFormSubmit}>
-      <input
-        type="text"
-        name="name"
-        placeholder="영어 대사를 입력해주세요"
-        value={value}
-        onChange={handleInputChange}
-      />
-      <button type="submit"> 생성 </button>
-      <p style={{ color: "red" }}>{errorMessage}</p>
-    </form>
-  );
-}
-
-function MainCard({ img, onHeartClick, alreadyFavorite }) {
-  console.log(alreadyFavorite);
-  const heartIcon = alreadyFavorite ? "💖" : "🤍";
-
-  return (
-    <div className="main-card">
-      <img src={img} alt="냥" width="400" />
-      <button onClick={onHeartClick}>{heartIcon}</button>
-    </div>
-  );
-}
-
-function Favorites({ favorites }) {
-  if (favorites.length === 0) {
-    //조건부 렌더링
-    return <div>사진 위 하트를 눌러 고양이 사진을 저장해봐요!</div>;
-  }
-
-  return (
-    <ul className="favorites">
-      {favorites.map((cat) => (
-        <CatItem img={cat} key={cat} />
-      ))}
-    </ul>
-  );
-}
-
-function CatItem(props) {
-  return (
-    <li>
-      {props.title}
-      <img
-        src={props.img}
-        style={{ width: "150px", border: "1px solid red" }}
-      />
-    </li>
-  );
-}
 
 const App = () => {
   const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
@@ -131,7 +75,6 @@ const App = () => {
   React.useEffect(() => {
     console.log(counter);
   }, [counter]); //카운터 바뀔때마다(렌더링 될때마다) 불림.
-  //initialCat(); //계속 불러짐
 
   ///상태 끌어올리기 (lifting state up) : 상태를 다른 컴포넌트에서 선언하도록 변경, 자식 컴포넌트에게 프롭스props 로 넘겨주기
   ///Form의 함수를 App의 함수로 이동
@@ -147,19 +90,6 @@ const App = () => {
     setCatImg(newCat);
   }
 
-  function rtnCatImg(value) {
-    //console.log(counter % 3 + 1);
-    // switch ((counter % 3) + 1) {
-    //   case 1:
-    //     return CAT1;
-    //   case 2:
-    //     return CAT2;
-    //   case 3:
-    //     return CAT3;
-    // }
-    return "http://cataas.com/cat/says/" + value;
-  }
-
   function handleHeartClick() {
     const nxtFavorites = [...favorites, catimg];
     setFavorites(nxtFavorites); //배열에 추가  ES6+스프레드(전개) 오퍼레이터(연산자) 문법
@@ -170,7 +100,7 @@ const App = () => {
 
   return (
     <div>
-      <H1>{counterTitle} 고양이 가라사대 </H1>
+      <Title>{counterTitle} 고양이 가라사대 </Title>
       <Form updateMainCat={updateMainCat} />
       <MainCard
         img={catimg}
@@ -183,5 +113,4 @@ const App = () => {
   );
 };
 
-const app = document.querySelector("#app");
-ReactDOM.render(<App />, app);
+export default App;
